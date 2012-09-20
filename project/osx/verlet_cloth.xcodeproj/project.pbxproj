@@ -1,0 +1,215 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		22197C09160B1B8100350098 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22197C08160B1B8100350098 /* OpenGL.framework */; };
+		22197C0B160B1B8900350098 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22197C0A160B1B8900350098 /* GLUT.framework */; };
+		22B4E1A5160B1784004B770D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22B4E1A4160B1784004B770D /* main.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		22B4E19E160B1784004B770D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		22197C08160B1B8100350098 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		22197C0A160B1B8900350098 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
+		22B4E1A0160B1784004B770D /* verlet_cloth */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = verlet_cloth; sourceTree = BUILT_PRODUCTS_DIR; };
+		22B4E1A4160B1784004B770D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../src/main.cpp; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		22B4E19D160B1784004B770D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22197C0B160B1B8900350098 /* GLUT.framework in Frameworks */,
+				22197C09160B1B8100350098 /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		22B4E195160B1784004B770D = {
+			isa = PBXGroup;
+			children = (
+				22197C0A160B1B8900350098 /* GLUT.framework */,
+				22197C08160B1B8100350098 /* OpenGL.framework */,
+				22B4E1A3160B1784004B770D /* verlet_cloth */,
+				22B4E1A1160B1784004B770D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		22B4E1A1160B1784004B770D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				22B4E1A0160B1784004B770D /* verlet_cloth */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		22B4E1A3160B1784004B770D /* verlet_cloth */ = {
+			isa = PBXGroup;
+			children = (
+				22B4E1A4160B1784004B770D /* main.cpp */,
+			);
+			path = verlet_cloth;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		22B4E19F160B1784004B770D /* verlet_cloth */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 22B4E1AA160B1784004B770D /* Build configuration list for PBXNativeTarget "verlet_cloth" */;
+			buildPhases = (
+				22B4E19C160B1784004B770D /* Sources */,
+				22B4E19D160B1784004B770D /* Frameworks */,
+				22B4E19E160B1784004B770D /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = verlet_cloth;
+			productName = verlet_cloth;
+			productReference = 22B4E1A0160B1784004B770D /* verlet_cloth */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		22B4E197160B1784004B770D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
+			buildConfigurationList = 22B4E19A160B1784004B770D /* Build configuration list for PBXProject "verlet_cloth" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 22B4E195160B1784004B770D;
+			productRefGroup = 22B4E1A1160B1784004B770D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				22B4E19F160B1784004B770D /* verlet_cloth */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		22B4E19C160B1784004B770D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22B4E1A5160B1784004B770D /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		22B4E1A8160B1784004B770D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		22B4E1A9160B1784004B770D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		22B4E1AB160B1784004B770D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		22B4E1AC160B1784004B770D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		22B4E19A160B1784004B770D /* Build configuration list for PBXProject "verlet_cloth" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22B4E1A8160B1784004B770D /* Debug */,
+				22B4E1A9160B1784004B770D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		22B4E1AA160B1784004B770D /* Build configuration list for PBXNativeTarget "verlet_cloth" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22B4E1AB160B1784004B770D /* Debug */,
+				22B4E1AC160B1784004B770D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 22B4E197160B1784004B770D /* Project object */;
+}
