@@ -12,7 +12,12 @@
  */
 
 
+#if defined(WIN32)
 #include <GL/glut.h>
+#elif defined(__APPLE__) || defined(MACOSX)
+#include <GLUT/glut.h>
+#endif // MACOSX
+
 
 
 #ifndef M_PI

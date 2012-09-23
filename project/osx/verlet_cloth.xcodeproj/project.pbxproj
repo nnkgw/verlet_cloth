@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		22197C09160B1B8100350098 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22197C08160B1B8100350098 /* OpenGL.framework */; };
 		22197C0B160B1B8900350098 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22197C0A160B1B8900350098 /* GLUT.framework */; };
+		22500815160F4FDC005304F3 /* glm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22500814160F4FDC005304F3 /* glm.cpp */; };
 		22B4E1A5160B1784004B770D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 22B4E1A4160B1784004B770D /* main.cpp */; };
 /* End PBXBuildFile section */
 
@@ -27,6 +28,7 @@
 /* Begin PBXFileReference section */
 		22197C08160B1B8100350098 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		22197C0A160B1B8900350098 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
+		22500814160F4FDC005304F3 /* glm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = glm.cpp; path = ../../src/glm.cpp; sourceTree = SOURCE_ROOT; };
 		22B4E1A0160B1784004B770D /* verlet_cloth */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = verlet_cloth; sourceTree = BUILT_PRODUCTS_DIR; };
 		22B4E1A4160B1784004B770D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../../src/main.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -65,6 +67,7 @@
 		22B4E1A3160B1784004B770D /* verlet_cloth */ = {
 			isa = PBXGroup;
 			children = (
+				22500814160F4FDC005304F3 /* glm.cpp */,
 				22B4E1A4160B1784004B770D /* main.cpp */,
 			);
 			path = verlet_cloth;
@@ -121,6 +124,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				22B4E1A5160B1784004B770D /* main.cpp in Sources */,
+				22500815160F4FDC005304F3 /* glm.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
