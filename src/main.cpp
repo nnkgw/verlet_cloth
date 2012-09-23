@@ -10,27 +10,44 @@
 #include <GLUT/glut.h>
 #endif // MACOSX
 
-void init(void){    
+#include "glm.h"
+
+GLMmodel* g_Model;
+
+void init(void){
+  g_Model = glmReadOBJ("dolphins.obj");
+  glmFacetNormals(g_Model);
+  glmVertexNormals(g_Model, 90);
+  glmUnitize(g_Model);
+
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+  glEnable(GL_CULL_FACE);
 }
 
 void display(void){
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    
-    glPushMatrix();
-      glEnable(GL_DEPTH_TEST);
-      glDepthFunc(GL_LESS); 
-      GLfloat red[] = { 0.8, 0.2, 0.2, 1.0 };
-      glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, red);
-      static int r = 0;
-      glRotated((double)r, 0.0, 1.0, 0.0);
-      if (++r >= 360){ r = 0; }
-      glFrontFace(GL_CW);
-      glutSolidTeapot(1.0f);
-      glFrontFace(GL_CCW);
-    glPopMatrix();
-    
-    glutSwapBuffers();
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  glPushMatrix();
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS); 
+    GLfloat red[] = { 0.8, 0.2, 0.2, 1.0 };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, red);
+	//glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_NORMALIZE);
+
+    static int r = 0;
+    glRotated((double)r, 0.0, 1.0, 0.0);
+    if (++r >= 360){ r = 0; }
+#if 0
+    glFrontFace(GL_CW);
+    glutSolidTeapot(1.0f);
+    glFrontFace(GL_CCW);
+#else
+    glmDraw(g_Model,GLM_SMOOTH|GLM_MATERIAL);
+#endif
+  glPopMatrix();
+
+  glutSwapBuffers();
 }
 
 void reshape(int width, int height){
@@ -58,6 +75,8 @@ void reshape(int width, int height){
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
+
+	//glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 }
 
 void idle(void){
