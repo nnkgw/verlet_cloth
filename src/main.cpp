@@ -10,16 +10,7 @@
 #include <GLUT/glut.h>
 #endif // MACOSX
 
-#include "glm.h"
-
-GLMmodel* g_Model;
-
 void init(void){
-  g_Model = glmReadOBJ("dolphins.obj");
-  glmFacetNormals(g_Model);
-  glmVertexNormals(g_Model, 90);
-  glmUnitize(g_Model);
-
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glEnable(GL_CULL_FACE);
 }
@@ -38,13 +29,11 @@ void display(void){
     static int r = 0;
     glRotated((double)r, 0.0, 1.0, 0.0);
     if (++r >= 360){ r = 0; }
-#if 0
+
     glFrontFace(GL_CW);
     glutSolidTeapot(1.0f);
     glFrontFace(GL_CCW);
-#else
-    glmDraw(g_Model,GLM_SMOOTH|GLM_MATERIAL);
-#endif
+
   glPopMatrix();
 
   glutSwapBuffers();
