@@ -10,9 +10,26 @@
 #include <GLUT/glut.h>
 #endif // MACOSX
 
+#include <vector>
+#include "glm/glm.hpp"
+
+struct sApplication{
+  GLfloat time;
+};
+
+std::vector<glm::vec3> F;
+
+sApplication g_Application;
+
 void init(void){
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glEnable(GL_CULL_FACE);
+
+  memset(&g_Application, 0, sizeof(sApplication));
+}
+
+void update_physics(GLfloat dt){
+
 }
 
 void display(void){
@@ -40,10 +57,10 @@ void display(void){
 }
 
 void reshape(int width, int height){
-  static GLfloat lightPosition[4] = {0.0f, 2.5f, 5.5f, 1.0f};
-  static GLfloat lightDiffuse[3] = {1.0f, 1.0f, 1.0f};
-  static GLfloat lightAmbient[3] = {0.25f, 0.25f, 0.25f};
-  static GLfloat lightSpecular[3] = {1.0f, 1.0f, 1.0f};
+  static GLfloat lightPosition[4] = {0.0f,  2.5f,  5.5f, 1.0f};
+  static GLfloat lightDiffuse[3]  = {1.0f,  1.0f,  1.0f      };
+  static GLfloat lightAmbient[3]  = {0.25f, 0.25f, 0.25f     };
+  static GLfloat lightSpecular[3] = {1.0f,  1.0f,  1.0f      };
 
   glEnable(GL_LIGHTING);
   glEnable(GL_LIGHT0);
@@ -62,16 +79,20 @@ void reshape(int width, int height){
   gluLookAt(0.0f, 2.5f, 5.5f, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
   glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
-  glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE,  lightDiffuse);
+  glLightfv(GL_LIGHT0, GL_AMBIENT,  lightAmbient);
   glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
 
   //glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 }
 
 void idle(void){
-  GLuint now_time = glutGet(GLUT_ELAPSED_TIME);
-  //GLfloat dt = ((GLfloat)(now_time - g_Application.time)) / 1000.0f;
+  GLuint  time = glutGet(GLUT_ELAPSED_TIME);
+  GLfloat dt = ((GLfloat)(time - g_Application.time)) / 1000.0f;
+
+  update_physics(dt);
+
+  g_Application.time = ((GLfloat)time) / 1000.0f;
   glutPostRedisplay();
 }
 
