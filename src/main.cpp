@@ -13,11 +13,65 @@
 #include <vector>
 #include "glm/glm.hpp"
 
+class CParticle{
+private:
+  bool      m_IsMovable;
+  glm::vec3 m_Positin;
+  glm::vec3 m_OldPosition;
+  glm::vec3 m_Acceleration;
+
+public:
+  CParticle(bool is_movable, glm::vec3 position, glm::vec3 acceleration) :
+  m_IsMovable(is_movable),
+  m_Positin(position),
+  m_OldPosition(position),
+  m_Acceleration(acceleration){}
+  ~CParticle(){}
+
+  void Update(float t){
+    if (m_IsMovable){
+      glm::vec3 tmp = m_Positin;
+      m_Positin += (m_Positin - m_OldPosition) + m_Acceleration * t * t;
+      m_OldPosition = tmp;
+    }
+  }
+
+  glm::vec3& GetPostion() { return m_Positin;   }
+  void       AddPosition(const glm::vec3 pos){
+    if (m_IsMovable){
+      m_Positin += pos;
+    }
+  }
+};
+
+class CConstraint{
+private:
+  float      m_Distance;
+  CParticle* m_Particle1;
+  CParticle* m_Particle2;
+
+public:
+  CConstraint(CParticle* p1, CParticle* p2) :
+  m_Distance(0.0f),
+  m_Particle1(p1),
+  m_Particle2(p2){
+    glm::vec3 p1_to_p2 = m_Particle2->GetPostion() - m_Particle1->GetPostion();
+    m_Distance = p1_to_p2.length();
+  }
+  ~CConstraint(){}
+
+  void Satisfy(){
+    glm::vec3 p1_to_p2 = m_Particle2->GetPostion() - m_Particle1->GetPostion();
+    float current_distance = p1_to_p2.length();
+    glm::vec3 correction_vector = p1_to_p2 * (1 - m_Distance/current_distance) * 0.5f;
+    m_Particle1->AddPosition( correction_vector);
+    m_Particle2->AddPosition(-correction_vector);
+  }
+};
+
 struct sApplication{
   GLfloat time;
 };
-
-std::vector<glm::vec3> F;
 
 sApplication g_Application;
 
