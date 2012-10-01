@@ -26,6 +26,7 @@ public:
   m_Positin(position),
   m_OldPosition(position),
   m_Acceleration(acceleration){}
+  CParticle(){};
   ~CParticle(){}
 
   void Update(float t){
@@ -67,6 +68,32 @@ public:
     m_Particle1->AddPosition( correction_vector);
     m_Particle2->AddPosition(-correction_vector);
   }
+};
+
+class CCloth{
+private:
+  int                      m_Width;
+  int                      m_Height;
+  std::vector<CParticle>   m_Particles;
+  std::vector<CConstraint> m_Constrains;
+
+public:
+  CCloth(float width, float height, int num_width, int num_height):
+  m_Width(num_height),
+  m_Height(num_height) {
+    m_Particles.resize(m_Width * m_Height);
+    for(int w = 0; w < m_Width; w++){
+      for(int h = 0; h < m_Height; h++){
+        glm::vec3 pos( width  * ( w / (float)m_Width  ),
+                      -height * ( h / (float)m_Height ),
+                       0.0f );
+        bool is_movable = (h == 0) ? false : true;
+        glm::vec3 gravity( 0.0f, -9.8f, 0.0f );
+        m_Particles[ h * m_Width + w ] = CParticle(is_movable, pos, gravity);
+      }
+    }
+  }
+  ~CCloth(){}
 };
 
 struct sApplication{
