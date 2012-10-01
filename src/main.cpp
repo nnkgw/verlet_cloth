@@ -75,7 +75,10 @@ private:
   int                      m_Width;
   int                      m_Height;
   std::vector<CParticle>   m_Particles;
-  std::vector<CConstraint> m_Constrains;
+  std::vector<CConstraint> m_Constraints;
+  
+  CParticle* GetParticle(int w, int h) {return &m_Particles[ h * m_Width + w ];}
+  void       MakeConstraint(CParticle* p1, CParticle* p2){ m_Constraints.push_back(CConstraint(p1,p2));}
 
 public:
   CCloth(float width, float height, int num_width, int num_height):
@@ -90,6 +93,16 @@ public:
         bool is_movable = (h == 0) ? false : true;
         glm::vec3 gravity( 0.0f, -9.8f, 0.0f );
         m_Particles[ h * m_Width + w ] = CParticle(is_movable, pos, gravity);
+      }
+    }
+    for(int w = 0; w < m_Width; w++){
+      for(int h = 0; h < m_Height; h++){
+        if (w < m_Width  - 1){ MakeConstraint(GetParticle(w,h), GetParticle(w+1,h  )); }
+        if (h < m_Height - 1){ MakeConstraint(GetParticle(w,h), GetParticle(w,  h+1)); }
+        if (w < m_Width  - 1 && h < m_Height - 1){
+          MakeConstraint(GetParticle(w,  h), GetParticle(w+1,w+1));
+          MakeConstraint(GetParticle(w+1,h), GetParticle(w,  h+1));
+        }
       }
     }
   }
