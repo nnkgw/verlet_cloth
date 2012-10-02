@@ -150,14 +150,14 @@ public:
     int col_idx = 0;
     for(int w = 0; w < m_Width - 1; w++){
       for(int h = 0; h < m_Height - 1; h++){
-        glm::vec3 col(1.0f, 0.0f, 0.0f);
-        if ( col_idx++ % 2 ){ col = glm::vec3(0.0f, 1.0f, 0.0f);}
+        glm::vec3 col(1.0f, 0.6f, 0.6f);
+        if ( col_idx++ % 2 ){ col = glm::vec3(1.0f, 1.0f, 1.0f);}
         DrawTriangle(GetParticle(w+1,h  ), GetParticle(w,  h), GetParticle(w, h+1), col);
         DrawTriangle(GetParticle(w+1,h+1), GetParticle(w+1,h), GetParticle(w, h+1), col);
       }
     }
     glEnd();
-
+/*
     glDisable(GL_DEPTH_TEST);
     glColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_LINES);
@@ -171,6 +171,7 @@ public:
       }
     }
     glEnd();
+*/
   }
   void Update(float dt){
     std::vector<CParticle>::iterator particle;
@@ -298,4 +299,3 @@ int main(int argc, char * argv[]){
   glutMainLoop();
   return 0;
 }
-
