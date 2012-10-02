@@ -18,6 +18,7 @@ private:
   bool      m_IsMovable;
   glm::vec3 m_Positin;
   glm::vec3 m_OldPosition;
+  glm::vec3 m_Velocity;
   glm::vec3 m_Acceleration;
 
 public:
@@ -25,7 +26,10 @@ public:
   m_IsMovable(is_movable),
   m_Positin(position),
   m_OldPosition(position),
-  m_Acceleration(acceleration){}
+  m_Velocity(glm::vec3(0.0f, 0.0f, 0.0f)),
+  m_Acceleration(acceleration)
+{
+  }
   CParticle(){};
   ~CParticle(){}
 
@@ -37,10 +41,12 @@ public:
     }
   }
 
-  glm::vec3& GetPostion() { return m_Positin; }
+  glm::vec3& GetPostion()  { return m_Positin; }
+  glm::vec3& GetVelocity() { return m_Velocity; }
   void       AddPosition(const glm::vec3 pos){
     if (m_IsMovable){
       m_Positin += pos;
+      m_Velocity = pos;
     }
   }
 };
@@ -57,18 +63,18 @@ public:
   m_Particle1(p1),
   m_Particle2(p2){
     glm::vec3 p1_to_p2 = m_Particle2->GetPostion() - m_Particle1->GetPostion();
-    m_Distance = p1_to_p2.length();
+    m_Distance = glm::length(p1_to_p2);
   }
   ~CConstraint(){}
 
   void Satisfy(){
     glm::vec3 p1_to_p2 = m_Particle2->GetPostion() - m_Particle1->GetPostion();
-    float current_distance = p1_to_p2.length();
+    float current_distance = glm::length(p1_to_p2);
 #if 0
-    //glm::vec3 correction_vector = p1_to_p2 * (1 - m_Distance/current_distance) * 0.5f;
+    glm::vec3 correction_vector = p1_to_p2 * (1 - m_Distance/current_distance) * 0.5f;
 #else
     float     diff               = current_distance - m_Distance;
-    glm::vec3 p1_to_p2_normalize = p1_to_p2 / current_distance;
+    glm::vec3 p1_to_p2_normalize = glm::normalize(p1_to_p2);
     glm::vec3 correction_vector  = p1_to_p2_normalize * diff * 0.5f;
 #endif
     m_Particle1->AddPosition( correction_vector);
@@ -122,12 +128,15 @@ public:
       for(int h = 0; h < m_Height; h++){
         if (w < m_Width  - 1){ MakeConstraint(GetParticle(w,h), GetParticle(w+1,h  )); }
         if (h < m_Height - 1){ MakeConstraint(GetParticle(w,h), GetParticle(w,  h+1)); }
+		/*
         if (w < m_Width  - 1 && h < m_Height - 1){
           MakeConstraint(GetParticle(w,  h), GetParticle(w+1,h+1));
           MakeConstraint(GetParticle(w+1,h), GetParticle(w,  h+1));
         }
+		*/
       }
     }
+/*
     for(int w = 0; w < m_Width; w++){
       for(int h = 0; h < m_Height; h++){
         if (w < m_Width  - 2){ MakeConstraint(GetParticle(w,h), GetParticle(w+2,h  )); }
@@ -138,31 +147,47 @@ public:
         }
       }
     }
+*/
   }
   ~CCloth(){}
 
   void Render(){
     glBegin(GL_TRIANGLES);
+    int col_idx = 0;
     for(int w = 0; w < m_Width - 1; w++){
       for(int h = 0; h < m_Height - 1; h++){
         glm::vec3 col(1.0f, 0.0f, 0.0f);
-        if ( w % 2 ){ col = glm::vec3(0.0f, 1.0f, 0.0f);}
+        if ( col_idx++ % 2 ){ col = glm::vec3(0.0f, 1.0f, 0.0f);}
         DrawTriangle(GetParticle(w+1,h  ), GetParticle(w,  h), GetParticle(w, h+1), col);
         DrawTriangle(GetParticle(w+1,h+1), GetParticle(w+1,h), GetParticle(w, h+1), col);
       }
     }
     glEnd();
+
+    glDisable(GL_DEPTH_TEST);
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glBegin(GL_LINES);
+    for(int w = 0; w < m_Width; w++){
+      for(int h = 0; h < m_Height; h++){
+        glm::vec3& line_start = GetParticle(w, h)->GetPostion();
+        glm::vec3& vel = GetParticle(w, h)->GetVelocity();
+        glm::vec3  line_end = line_start + vel;
+        glVertex3fv((GLfloat*)&line_start);
+        glVertex3fv((GLfloat*)&line_end);
+      }
+    }
+    glEnd();
   }
   void Update(float dt){
+    std::vector<CParticle>::iterator particle;
+    for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
+      (*particle).Update(dt);
+    }
     for(int i = 0; i < 10; i++){
       std::vector<CConstraint>::iterator constraint;
       for(constraint = m_Constraints.begin(); constraint != m_Constraints.end(); constraint++){
         (*constraint).Satisfy();
       }
-    }
-    std::vector<CParticle>::iterator particle;
-    for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
-      (*particle).Update(dt);
     }
   }
 };
@@ -172,7 +197,7 @@ struct sApplication{
 };
 
 sApplication g_Application;
-CCloth g_Cloth(2.0f, 2.0f, 50, 50);
+CCloth g_Cloth(2.0f, 2.0f, 10, 10);
 
 void init(void){
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
