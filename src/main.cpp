@@ -104,8 +104,8 @@ public:
     for(int w = 0; w < m_Width; w++){
       for(int h = 0; h < m_Height; h++){
         glm::vec3 pos( width  * ((float)w/(float)m_Width ) - width  * 0.5f,
-                      -height * ((float)h/(float)m_Height) + height * 0.5f,
-                       0.0f );
+                       1.0f,//-height * ((float)h/(float)m_Height) + height * 0.5f,
+                      -height * ((float)h/(float)m_Height) + height * 0.5f );
 #if 0
         bool is_movable = (h == 0) ? false : true;
 #else
@@ -115,7 +115,7 @@ public:
           is_movable = false;
         }
 #endif
-        glm::vec3 gravity( 0.0f, -9.8f, 0.0f );
+        glm::vec3 gravity( 0.0f, -0.0000098f, 0.0f );
         m_Particles[ h * m_Width + w ] = CParticle(is_movable, pos, gravity);
 #if 0
         printf("pos(%f,%f,%f)\n",pos.x, pos.y, pos.z);
@@ -177,7 +177,7 @@ public:
     for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
       (*particle).Update(dt);
     }
-    for(int i = 0; i < 100; i++){
+    for(int i = 0; i < 15; i++){
       std::vector<CConstraint>::iterator constraint;
       for(constraint = m_Constraints.begin(); constraint != m_Constraints.end(); constraint++){
         (*constraint).Satisfy();
@@ -191,7 +191,7 @@ struct sApplication{
 };
 
 sApplication g_Application;
-CCloth g_Cloth(2.0f, 2.0f, 6, 6);
+CCloth g_Cloth(2.0f, 2.0f, 20, 20);
 
 void init(void){
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
