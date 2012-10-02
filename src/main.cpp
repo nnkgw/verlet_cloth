@@ -32,7 +32,7 @@ public:
   void Update(float t){
     if (m_IsMovable){
       glm::vec3 tmp = m_Positin;
-      m_Positin += (m_Positin - m_OldPosition) + m_Acceleration * t * t;
+      m_Positin += (m_Positin - m_OldPosition)*0.9f + m_Acceleration * t * t;
       m_OldPosition = tmp;
     }
   }
@@ -96,10 +96,18 @@ public:
         glm::vec3 pos( width  * ((float)w/(float)m_Width ) - width  * 0.5f,
                       -height * ((float)h/(float)m_Height) + height * 0.5f,
                        0.0f );
+#if 0
         bool is_movable = (h == 0) ? false : true;
-        glm::vec3 gravity( 0.0f, -9.8f, 0.0f );
+#else
+        bool is_movable = true;
+        if ( (( h == 0 ) && ( w == 0        )) ||
+             (( h == 0 ) && ( w == m_Width-1)) ){
+          is_movable = false;
+        }
+#endif
+        glm::vec3 gravity( 0.0f, -0.00000098f, 0.0f );
         m_Particles[ h * m_Width + w ] = CParticle(is_movable, pos, gravity);
-#if 1
+#if 0
         printf("pos(%f,%f,%f)\n",pos.x, pos.y, pos.z);
 #endif
       }
@@ -109,8 +117,18 @@ public:
         if (w < m_Width  - 1){ MakeConstraint(GetParticle(w,h), GetParticle(w+1,h  )); }
         if (h < m_Height - 1){ MakeConstraint(GetParticle(w,h), GetParticle(w,  h+1)); }
         if (w < m_Width  - 1 && h < m_Height - 1){
-          MakeConstraint(GetParticle(w,  h), GetParticle(w+1,w+1));
+          MakeConstraint(GetParticle(w,  h), GetParticle(w+1,h+1));
           MakeConstraint(GetParticle(w+1,h), GetParticle(w,  h+1));
+        }
+      }
+    }
+    for(int w = 0; w < m_Width; w++){
+      for(int h = 0; h < m_Height; h++){
+        if (w < m_Width  - 2){ MakeConstraint(GetParticle(w,h), GetParticle(w+2,h  )); }
+        if (h < m_Height - 2){ MakeConstraint(GetParticle(w,h), GetParticle(w,  h+2)); }
+        if (w < m_Width  - 2 && h < m_Height - 2){
+          MakeConstraint(GetParticle(w,  h), GetParticle(w+2,h+2));
+          MakeConstraint(GetParticle(w+2,h), GetParticle(w,  h+2));
         }
       }
     }
@@ -130,13 +148,15 @@ public:
     glEnd();
   }
   void Update(float dt){
+    for(int i = 0; i < 10; i++){
+      std::vector<CConstraint>::iterator constraint;
+      for(constraint = m_Constraints.begin(); constraint != m_Constraints.end(); constraint++){
+        (*constraint).Satisfy();
+      }
+    }
     std::vector<CParticle>::iterator particle;
     for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
       (*particle).Update(dt);
-    }
-    std::vector<CConstraint>::iterator constraint;
-    for(constraint = m_Constraints.begin(); constraint != m_Constraints.end(); constraint++){
-      (*constraint).Satisfy();
     }
   }
 };
