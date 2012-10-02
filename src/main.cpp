@@ -64,7 +64,13 @@ public:
   void Satisfy(){
     glm::vec3 p1_to_p2 = m_Particle2->GetPostion() - m_Particle1->GetPostion();
     float current_distance = p1_to_p2.length();
-    glm::vec3 correction_vector = p1_to_p2 * (1 - m_Distance/current_distance) * 0.5f;
+#if 0
+    //glm::vec3 correction_vector = p1_to_p2 * (1 - m_Distance/current_distance) * 0.5f;
+#else
+    float     diff               = current_distance - m_Distance;
+    glm::vec3 p1_to_p2_normalize = p1_to_p2 / current_distance;
+    glm::vec3 correction_vector  = p1_to_p2_normalize * diff * 0.5f;
+#endif
     m_Particle1->AddPosition( correction_vector);
     m_Particle2->AddPosition(-correction_vector);
   }
