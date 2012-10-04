@@ -83,9 +83,9 @@ public:
   m_Radius(radius){}
 
   void Update(float dt){
-    m_Frequency += dt / 5.0f;
-    if (m_Frequency > 3.14f * 2.0f){ m_Frequency = 0.0f; }
     m_Position.z = cos(m_Frequency) * 2.0f;
+    m_Frequency += dt / 5.0f;
+    if (m_Frequency > 3.14f * 2.0f){ m_Frequency -= 3.14 * 2.0f; }
   }
 
   void Render(){
@@ -124,8 +124,8 @@ public:
     for(int w = 0; w < m_Width; w++){
       for(int h = 0; h < m_Height; h++){
         glm::vec3 pos( width  * ((float)w/(float)m_Width ) - width  * 0.5f,
-                       1.0f,
-                      -height * ((float)h/(float)m_Height) + height * 0.5f );
+                      -height * ((float)h/(float)m_Height) + height * 0.5f,
+                       0.0f );
         bool is_movable = (h == 0) ? false : true;
         glm::vec3 gravity( 0.0f, -0.098f, 0.0f );
         m_Particles[ h * m_Width + w ] = CParticle(is_movable, pos, gravity);
@@ -151,6 +151,11 @@ public:
         }
       }
     }
+    // initial velocity
+    for(int w = 0; w < m_Width; w++){
+      glm::vec3 vec(0.0f, 0.0f, -0.05f);
+      GetParticle(w, m_Height-1)->AddPosition(vec);
+    }
   }
   ~CCloth(){}
 
@@ -172,15 +177,15 @@ public:
     for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
       (*particle).Update(dt);
     }
-    for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
-      glm::vec3 vec    = (*particle).GetPosition() - ball->GetPosition();
-      float     length = glm::length(vec);
-      float     radius = ball->GetRadius() * 1.5f;
-      if (length < radius) {
-        (*particle).AddPosition(glm::normalize(vec) * (radius - length));
-      }
-    }
     for(int i = 0; i < 10; i++){
+      for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
+        glm::vec3 vec    = (*particle).GetPosition() - ball->GetPosition();
+        float     length = glm::length(vec);
+        float     radius = ball->GetRadius() * 1.4f;
+        if (length < radius) {
+          (*particle).AddPosition(glm::normalize(vec) * (radius - length));
+        }
+      }
       std::vector<CConstraint>::iterator constraint;
       for(constraint = m_Constraints.begin(); constraint != m_Constraints.end(); constraint++){
         (*constraint).Satisfy();
