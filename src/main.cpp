@@ -16,14 +16,14 @@
 class CParticle{
 private:
   bool      m_IsMovable;
-  glm::vec3 m_Positin;
+  glm::vec3 m_Position;
   glm::vec3 m_OldPosition;
   glm::vec3 m_Acceleration;
 
 public:
   CParticle(bool is_movable, glm::vec3 position, glm::vec3 acceleration) :
   m_IsMovable(is_movable),
-  m_Positin(position),
+  m_Position(position),
   m_OldPosition(position),
   m_Acceleration(acceleration){}
   CParticle(){};
@@ -31,16 +31,16 @@ public:
 
   void Update(float t){
     if (m_IsMovable){
-      glm::vec3 tmp = m_Positin;
-      m_Positin += (m_Positin - m_OldPosition) + m_Acceleration * t * t;
+      glm::vec3 tmp = m_Position;
+      m_Position += (m_Position - m_OldPosition) + m_Acceleration * t * t;
       m_OldPosition = tmp;
     }
   }
 
-  glm::vec3& GetPostion()  { return m_Positin; }
+  glm::vec3& GetPosition()  { return m_Position; }
   void       AddPosition(const glm::vec3 pos){
     if (m_IsMovable){
-      m_Positin += pos;
+      m_Position += pos;
     }
   }
 };
@@ -56,18 +56,47 @@ public:
   m_Distance(0.0f),
   m_Particle1(p1),
   m_Particle2(p2){
-    glm::vec3 p1_to_p2 = m_Particle2->GetPostion() - m_Particle1->GetPostion();
+    glm::vec3 p1_to_p2 = m_Particle2->GetPosition() - m_Particle1->GetPosition();
     m_Distance = glm::length(p1_to_p2);
   }
   ~CConstraint(){}
 
   void Satisfy(){
-    glm::vec3 p1_to_p2          = m_Particle2->GetPostion() - m_Particle1->GetPostion();
+    glm::vec3 p1_to_p2          = m_Particle2->GetPosition() - m_Particle1->GetPosition();
     float     diff              = glm::length(p1_to_p2) - m_Distance;
     glm::vec3 correction_vector = glm::normalize(p1_to_p2) * diff * 0.5f;
     m_Particle1->AddPosition( correction_vector);
     m_Particle2->AddPosition(-correction_vector);
   }
+};
+
+class CBall{
+private:
+  float     m_Frequency;
+  glm::vec3 m_Position;
+  float     m_Radius;
+
+public:
+  CBall(float radius) :
+  m_Frequency(0.0f),
+  m_Position(0.0f,0.0f,0.0f),
+  m_Radius(radius){}
+
+  void Update(float dt){
+    m_Frequency += dt / 5.0f;
+    if (m_Frequency > 3.14f * 2.0f){ m_Frequency = 0.0f; }
+    m_Position.z = cos(m_Frequency) * 2.0f;
+  }
+
+  void Render(){
+    glTranslatef(m_Position.x, m_Position.y, m_Position.z);
+    static const glm::vec3 color(0.0f, 0.0f, 1.0f);
+    glColor3fv((GLfloat*)&color);
+    glutSolidSphere(m_Radius,50,50);
+  }
+
+  glm::vec3& GetPosition(){ return m_Position; }
+  float      GetRadius()  { return m_Radius;   }
 };
 
 class CCloth{
@@ -82,10 +111,11 @@ private:
 
   void DrawTriangle(CParticle* p1, CParticle* p2, CParticle* p3, const glm::vec3 color){
     glColor3fv((GLfloat*)&color);
-    glVertex3fv((GLfloat*)&(p1->GetPostion()));
-    glVertex3fv((GLfloat*)&(p2->GetPostion()));
-    glVertex3fv((GLfloat*)&(p3->GetPostion()));
+    glVertex3fv((GLfloat*)&(p1->GetPosition()));
+    glVertex3fv((GLfloat*)&(p2->GetPosition()));
+    glVertex3fv((GLfloat*)&(p3->GetPosition()));
   }
+
 public:
   CCloth(float width, float height, int num_width, int num_height):
   m_Width(num_height),
@@ -94,10 +124,10 @@ public:
     for(int w = 0; w < m_Width; w++){
       for(int h = 0; h < m_Height; h++){
         glm::vec3 pos( width  * ((float)w/(float)m_Width ) - width  * 0.5f,
-                       1.0f,//-height * ((float)h/(float)m_Height) + height * 0.5f,
+                       1.0f,
                       -height * ((float)h/(float)m_Height) + height * 0.5f );
         bool is_movable = (h == 0) ? false : true;
-        glm::vec3 gravity( 0.0f, -0.000000098f, 0.0f );
+        glm::vec3 gravity( 0.0f, -0.098f, 0.0f );
         m_Particles[ h * m_Width + w ] = CParticle(is_movable, pos, gravity);
       }
     }
@@ -137,10 +167,18 @@ public:
     }
     glEnd();
   }
-  void Update(float dt){
+  void Update(float dt, CBall* ball){
     std::vector<CParticle>::iterator particle;
     for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
       (*particle).Update(dt);
+    }
+    for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
+      glm::vec3 vec    = (*particle).GetPosition() - ball->GetPosition();
+      float     length = glm::length(vec);
+      float     radius = ball->GetRadius() * 1.5f;
+      if (length < radius) {
+        (*particle).AddPosition(glm::normalize(vec) * (radius - length));
+      }
     }
     for(int i = 0; i < 10; i++){
       std::vector<CConstraint>::iterator constraint;
@@ -162,36 +200,9 @@ public:
   void  SetTime(float time){ m_Time = time; }
 };
 
-class CBall{
-private:
-  float     m_Frequency;
-  glm::vec3 m_Position;
-  float     m_Radius;
-
-public:
-  CBall(float radius) :
-  m_Frequency(0.0f),
-  m_Position(0.0f,0.0f,0.0f),
-  m_Radius(radius){}
-
-  void Update(float dt){
-    m_Frequency += dt / 5000.0f;
-    if (m_Frequency > 3.14f * 2.0f){ m_Frequency = 0.0f; }
-    m_Position.z  = cos(m_Frequency) * 3.0f;
-  }
-
-  void Render(){
-    glTranslatef(m_Position.x, m_Position.y, m_Position.z);
-    
-    static const glm::vec3 color(0.0f, 0.0f, 1.0f);
-    glColor3fv((GLfloat*)&color);
-    glutSolidSphere(m_Radius,50,50);
-  }
-};
-
 CApplication g_Application;
-CCloth       g_Cloth(2.0f, 2.0f, 10, 10);
-CBall        g_Ball(0.3f);
+CCloth       g_Cloth(2.0f, 2.0f, 20, 20);
+CBall        g_Ball(0.1f);
 
 void init(void){
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -248,13 +259,13 @@ void reshape(int width, int height){
 }
 
 void idle(void){
-  GLuint  time = glutGet(GLUT_ELAPSED_TIME);
-  GLfloat dt = ((GLfloat)(time - g_Application.GetTime())) / 1000.0f;
+  GLfloat time = (float)glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+  GLfloat dt = time - g_Application.GetTime();
 
-  g_Cloth.Update(dt);
   g_Ball.Update(dt);
+  g_Cloth.Update(dt, &g_Ball);
 
-  g_Application.SetTime( (GLfloat)time / 1000.0f );
+  g_Application.SetTime(time);
   glutPostRedisplay();
 }
 
