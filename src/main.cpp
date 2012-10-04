@@ -151,11 +151,6 @@ public:
         }
       }
     }
-    // initial velocity
-    for(int w = 0; w < m_Width; w++){
-      glm::vec3 vec(0.0f, 0.0f, -0.05f);
-      GetParticle(w, m_Height-1)->AddPosition(vec);
-    }
   }
   ~CCloth(){}
 
