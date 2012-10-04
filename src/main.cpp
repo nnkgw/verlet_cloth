@@ -151,32 +151,67 @@ public:
   }
 };
 
-struct sApplication{
-  GLfloat time;
+class CApplication{
+private:
+  float m_Time;
+public:
+  CApplication() :
+  m_Time(0.0f){}
+
+  float GetTime(){ return m_Time; }
+  void  SetTime(float time){ m_Time = time; }
 };
 
-sApplication g_Application;
-CCloth g_Cloth(2.0f, 2.0f, 10, 10);
+class CBall{
+private:
+  float     m_Frequency;
+  glm::vec3 m_Position;
+  float     m_Radius;
+
+public:
+  CBall(float radius) :
+  m_Frequency(0.0f),
+  m_Position(0.0f,0.0f,0.0f),
+  m_Radius(radius){}
+
+  void Update(float dt){
+    m_Frequency += dt / 5000.0f;
+    if (m_Frequency > 3.14f * 2.0f){ m_Frequency = 0.0f; }
+    m_Position.z  = cos(m_Frequency) * 3.0f;
+  }
+
+  void Render(){
+    glTranslatef(m_Position.x, m_Position.y, m_Position.z);
+    
+    static const glm::vec3 color(0.0f, 0.0f, 1.0f);
+    glColor3fv((GLfloat*)&color);
+    glutSolidSphere(m_Radius,50,50);
+  }
+};
+
+CApplication g_Application;
+CCloth       g_Cloth(2.0f, 2.0f, 10, 10);
+CBall        g_Ball(0.3f);
 
 void init(void){
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glEnable(GL_CULL_FACE);
-  memset(&g_Application, 0, sizeof(sApplication));
-}
-
-void update_physics(GLfloat dt){
-  g_Cloth.Update(dt);
 }
 
 void display(void){
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LESS); 
+  glEnable(GL_COLOR_MATERIAL);
+  glEnable(GL_NORMALIZE);
+
   glPushMatrix();
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS); 
-    glEnable(GL_COLOR_MATERIAL);
-    glEnable(GL_NORMALIZE);
     g_Cloth.Render();
+  glPopMatrix();
+
+  glPushMatrix();
+    g_Ball.Render();
   glPopMatrix();
 
   glutSwapBuffers();
@@ -214,11 +249,12 @@ void reshape(int width, int height){
 
 void idle(void){
   GLuint  time = glutGet(GLUT_ELAPSED_TIME);
-  GLfloat dt = ((GLfloat)(time - g_Application.time)) / 1000.0f;
+  GLfloat dt = ((GLfloat)(time - g_Application.GetTime())) / 1000.0f;
 
-  update_physics(dt);
+  g_Cloth.Update(dt);
+  g_Ball.Update(dt);
 
-  g_Application.time = ((GLfloat)time) / 1000.0f;
+  g_Application.SetTime( (GLfloat)time / 1000.0f );
   glutPostRedisplay();
 }
 
