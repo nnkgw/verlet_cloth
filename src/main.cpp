@@ -127,7 +127,7 @@ public:
                       -height * ((float)h/(float)m_Height) + height * 0.5f,
                        0.0f );
         bool is_movable = (h == 0) ? false : true;
-        glm::vec3 gravity( 0.0f, -0.098f, 0.0f );
+        glm::vec3 gravity( 0.05f, -0.98f, 0.02f );
         m_Particles[ h * m_Width + w ] = CParticle(is_movable, pos, gravity);
       }
     }
