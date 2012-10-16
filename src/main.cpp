@@ -127,7 +127,7 @@ public:
                       -height * ((float)h/(float)m_Height) + height * 0.5f,
                        0.0f );
         bool is_movable = (h == 0) ? false : true;
-        glm::vec3 gravity( 0.05f, -0.98f, 0.02f );
+        glm::vec3 gravity( 0.0f, -0.98f, 0.0f );
         m_Particles[ h * m_Width + w ] = CParticle(is_movable, pos, gravity);
       }
     }
@@ -172,7 +172,7 @@ public:
     for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
       (*particle).Update(dt);
     }
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < 5; i++){
       for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
         glm::vec3 vec    = (*particle).GetPosition() - ball->GetPosition();
         float     length = glm::length(vec);
@@ -207,6 +207,9 @@ CBall        g_Ball(0.1f);
 void init(void){
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glEnable(GL_CULL_FACE);
+
+  GLfloat time = (float)glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+  g_Application.SetTime(time);
 }
 
 void display(void){
