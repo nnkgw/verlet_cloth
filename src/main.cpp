@@ -70,6 +70,22 @@ public:
   }
 };
 
+class CSpring{
+private:
+  float     m_Distance;
+  glm::vec3 m_Position1;
+  glm::vec3 m_Position2;
+
+public:
+  CSpring(glm::vec3& pos1, glm::vec3& pos2) :
+  m_Distance(0.0f),
+  m_Position1(pos1),
+  m_Position2(pos2)
+  {}
+  void CalcForce(){
+  }
+};
+
 class CBall{
 private:
   float     m_Frequency;
@@ -132,17 +148,17 @@ public:
       }
     }
     for(int w = 0; w < m_Width; w++){
-      for(int h = 0; h < m_Height; h++){
+      for(int h = 0; h < m_Height; h++){           // structual constraint
         if (w < m_Width  - 1){ MakeConstraint(GetParticle(w,h), GetParticle(w+1,h  )); }
         if (h < m_Height - 1){ MakeConstraint(GetParticle(w,h), GetParticle(w,  h+1)); }
-        if (w < m_Width  - 1 && h < m_Height - 1){
+        if (w < m_Width  - 1 && h < m_Height - 1){ // shear constraint
           MakeConstraint(GetParticle(w,  h), GetParticle(w+1,h+1));
           MakeConstraint(GetParticle(w+1,h), GetParticle(w,  h+1));
         }
       }
     }
     for(int w = 0; w < m_Width; w++){
-      for(int h = 0; h < m_Height; h++){
+      for(int h = 0; h < m_Height; h++){           // bend constraint
         if (w < m_Width  - 2){ MakeConstraint(GetParticle(w,h), GetParticle(w+2,h  )); }
         if (h < m_Height - 2){ MakeConstraint(GetParticle(w,h), GetParticle(w,  h+2)); }
         if (w < m_Width  - 2 && h < m_Height - 2){
