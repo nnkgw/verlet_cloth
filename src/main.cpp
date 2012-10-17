@@ -43,6 +43,11 @@ public:
       m_Position += pos;
     }
   }
+  void       AddForce(const glm::vec3 force){
+    if (m_IsMovable){
+      m_Acceleration += force;
+    }
+  }
 };
 
 class CConstraint{
@@ -59,7 +64,6 @@ public:
     glm::vec3 p1_to_p2 = m_Particle2->GetPosition() - m_Particle1->GetPosition();
     m_Distance = glm::length(p1_to_p2);
   }
-  ~CConstraint(){}
 
   void Satisfy(){
     glm::vec3 p1_to_p2          = m_Particle2->GetPosition() - m_Particle1->GetPosition();
@@ -72,17 +76,27 @@ public:
 
 class CSpring{
 private:
-  float     m_Distance;
-  glm::vec3 m_Position1;
-  glm::vec3 m_Position2;
-
+  float      m_Distance;
+  CParticle* m_Particle1;
+  CParticle* m_Particle2;
+  float      m_Stiffness;
 public:
-  CSpring(glm::vec3& pos1, glm::vec3& pos2) :
+  CSpring(CParticle* p1, CParticle* p2, float stiffness) :
   m_Distance(0.0f),
-  m_Position1(pos1),
-  m_Position2(pos2)
-  {}
-  void CalcForce(){
+  m_Particle1(p1),
+  m_Particle2(p2),
+  m_Stiffness(stiffness)
+ {
+    //glm::vec3 p1_to_p2 = m_Particle2->GetPosition() - m_Particle1->GetPosition();
+    //m_Distance = glm::length(p1_to_p2);
+  }
+  
+  void ApplyForce(){
+    glm::vec3 p1_to_p2          = m_Particle2->GetPosition() - m_Particle1->GetPosition();
+    float     diff              = glm::length(p1_to_p2) - m_Distance;
+    glm::vec3 force             = m_Stiffness * glm::normalize(p1_to_p2) * diff; 
+    m_Particle1->AddForce( force);
+    m_Particle2->AddForce(-force);
   }
 };
 
