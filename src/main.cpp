@@ -86,15 +86,15 @@ public:
   m_Particle1(p1),
   m_Particle2(p2),
   m_Stiffness(stiffness)
- {
+  {
     //glm::vec3 p1_to_p2 = m_Particle2->GetPosition() - m_Particle1->GetPosition();
     //m_Distance = glm::length(p1_to_p2);
   }
   
   void ApplyForce(){
-    glm::vec3 p1_to_p2          = m_Particle2->GetPosition() - m_Particle1->GetPosition();
-    float     diff              = glm::length(p1_to_p2) - m_Distance;
-    glm::vec3 force             = m_Stiffness * glm::normalize(p1_to_p2) * diff; 
+    glm::vec3 p1_to_p2 = m_Particle2->GetPosition() - m_Particle1->GetPosition();
+    float     diff     = glm::length(p1_to_p2) - m_Distance;
+    glm::vec3 force    = m_Stiffness * glm::normalize(p1_to_p2) * diff; 
     m_Particle1->AddForce( force);
     m_Particle2->AddForce(-force);
   }
@@ -134,9 +134,11 @@ private:
   int                      m_Width;
   int                      m_Height;
   std::vector<CParticle>   m_Particles;
+  std::vector<CParticle>   m_GoalParticles;
   std::vector<CConstraint> m_Constraints;
   
   CParticle* GetParticle(int w, int h) {return &m_Particles[ h * m_Width + w ];}
+  CParticle* GetGoalParticle(int w, int h) {return &m_GoalParticles[ h * m_Width + w ];}
   void       MakeConstraint(CParticle* p1, CParticle* p2){ m_Constraints.push_back(CConstraint(p1,p2));}
 
   void DrawTriangle(CParticle* p1, CParticle* p2, CParticle* p3, const glm::vec3 color){
@@ -151,6 +153,7 @@ public:
   m_Width(num_height),
   m_Height(num_height) {
     m_Particles.resize(m_Width * m_Height);
+    m_GoalParticles.resize(m_Width * m_Height);
     for(int w = 0; w < m_Width; w++){
       for(int h = 0; h < m_Height; h++){
         glm::vec3 pos( width  * ((float)w/(float)m_Width ) - width  * 0.5f,
@@ -159,6 +162,10 @@ public:
         bool is_movable = (h == 0) ? false : true;
         glm::vec3 gravity( 0.0f, -0.98f, 0.0f );
         m_Particles[ h * m_Width + w ] = CParticle(is_movable, pos, gravity);
+        glm::vec3 goal_pos( width  * ((float)w/(float)m_Width ) - width  * 0.5f,
+                           -height * ((float)h/(float)m_Height) + height * 0.5f -1.0f,
+                            0.0f );
+        m_GoalParticles[ h * m_Width + w ] = CParticle(false, goal_pos, gravity);
       }
     }
     for(int w = 0; w < m_Width; w++){
@@ -193,6 +200,12 @@ public:
         if ( col_idx++ % 2 ){ col = glm::vec3(1.0f, 1.0f, 1.0f);}
         DrawTriangle(GetParticle(w+1,h  ), GetParticle(w,  h), GetParticle(w, h+1), col);
         DrawTriangle(GetParticle(w+1,h+1), GetParticle(w+1,h), GetParticle(w, h+1), col);
+/*
+        glm::vec3 goal_col(1.0f, 0.0f, 0.0f);
+        if ( col_idx++ % 2 ){ goal_col = glm::vec3(0.0f, 0.0f, 1.0f);}
+        DrawTriangle(GetGoalParticle(w+1,h  ), GetGoalParticle(w,  h), GetGoalParticle(w, h+1), goal_col);
+        DrawTriangle(GetGoalParticle(w+1,h+1), GetGoalParticle(w+1,h), GetGoalParticle(w, h+1), goal_col);
+*/
       }
     }
     glEnd();
