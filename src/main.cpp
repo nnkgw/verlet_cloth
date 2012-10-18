@@ -48,6 +48,11 @@ public:
       m_Acceleration += force;
     }
   }
+  void       SetForce(const glm::vec3 force){
+    if (m_IsMovable){
+      m_Acceleration = force;
+    }
+  }
 };
 
 class CConstraint{
@@ -95,8 +100,14 @@ public:
     glm::vec3 p1_to_p2 = m_Particle2->GetPosition() - m_Particle1->GetPosition();
     float     diff     = glm::length(p1_to_p2) - m_Distance;
     glm::vec3 force    = m_Stiffness * glm::normalize(p1_to_p2) * diff; 
-    m_Particle1->AddForce( force);
-    m_Particle2->AddForce(-force);
+    m_Particle1->SetForce( force);
+    m_Particle2->SetForce(-force);
+  }
+
+  void ResetForce(){
+    glm::vec3 gravity( 0.0f, -0.98f, 0.0f );
+    m_Particle1->SetForce(gravity);
+    m_Particle2->SetForce(gravity);
   }
 };
 
@@ -136,10 +147,12 @@ private:
   std::vector<CParticle>   m_Particles;
   std::vector<CParticle>   m_GoalParticles;
   std::vector<CConstraint> m_Constraints;
+  std::vector<CSpring>     m_Springs;
   
   CParticle* GetParticle(int w, int h) {return &m_Particles[ h * m_Width + w ];}
   CParticle* GetGoalParticle(int w, int h) {return &m_GoalParticles[ h * m_Width + w ];}
-  void       MakeConstraint(CParticle* p1, CParticle* p2){ m_Constraints.push_back(CConstraint(p1,p2));}
+  void       MakeConstraint(CParticle* p1, CParticle* p2) { m_Constraints.push_back(CConstraint(p1,p2));}
+  void       MakeSpring(CParticle* p1, CParticle* p2, float stiffness) { m_Springs.push_back(CSpring(p1,p2, stiffness)); }
 
   void DrawTriangle(CParticle* p1, CParticle* p2, CParticle* p3, const glm::vec3 color){
     glColor3fv((GLfloat*)&color);
@@ -166,6 +179,7 @@ public:
                            -height * ((float)h/(float)m_Height) + height * 0.5f -1.0f,
                             0.0f );
         m_GoalParticles[ h * m_Width + w ] = CParticle(false, goal_pos, gravity);
+        MakeSpring(GetParticle(w, h), GetGoalParticle(w, h), 10.0f);
       }
     }
     for(int w = 0; w < m_Width; w++){
@@ -215,6 +229,17 @@ public:
     for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
       (*particle).Update(dt);
     }
+ /*
+    float time = (float)glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
+    std::vector<CSpring>::iterator spring;
+    for(spring = m_Springs.begin(); spring != m_Springs.end(); spring++){
+      if (time < 2.0f){
+        (*spring).ApplyForce();
+      }else{
+        (*spring).ResetForce();
+      }
+    }
+*/
     for(int i = 0; i < 5; i++){
       for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
         glm::vec3 vec    = (*particle).GetPosition() - ball->GetPosition();
