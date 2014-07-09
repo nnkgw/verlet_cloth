@@ -8,7 +8,9 @@
 #endif // _DEBUG
 #elif defined(__APPLE__) || defined(MACOSX)
 #include <GLUT/glut.h>
-#endif // MACOSX
+#else // MACOSX
+#include <GL/glut.h>
+#endif
 
 #include <vector>
 #include "glm/glm.hpp"
