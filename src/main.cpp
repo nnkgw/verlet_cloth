@@ -274,6 +274,27 @@ CApplication g_Application;
 CCloth       g_Cloth(2.0f, 2.0f, 20, 20);
 CBall        g_Ball(0.1f);
 
+void render_string(std::string str, int w, int h, int x0, int y0) {
+  glDisable(GL_LIGHTING);
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0, w, h, 0);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+      glLoadIdentity();
+      glRasterPos2f(x0, y0);
+      int size = (int)str.size();
+      for(int i = 0; i < size; ++i){
+        char ic = str[i];
+        glutBitmapCharacter(GLUT_BITMAP_9_BY_15, ic);
+      }
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);
+}
+
 void init(void){
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glEnable(GL_CULL_FACE);
@@ -297,6 +318,8 @@ void display(void){
   glPushMatrix();
     g_Ball.Render();
   glPopMatrix();
+
+  //render_string();
 
   glutSwapBuffers();
 }
