@@ -302,6 +302,12 @@ void idle(void){
   glutPostRedisplay();
 }
 
+void keyboard(unsigned char key , int x , int y){
+  switch(key){
+  case 27: exit(0); break; // esc
+  }
+}
+
 void special(int key, int x, int y){
   if (key == GLUT_KEY_UP) {
     g_Application.m_IterationNum++;
@@ -324,6 +330,7 @@ int main(int argc, char * argv[]){
   glutDisplayFunc(display);
   glutIdleFunc(idle);
   glutReshapeFunc(reshape);
+  glutKeyboardFunc(keyboard);
   glutSpecialFunc(special);
 
   glutMainLoop();
