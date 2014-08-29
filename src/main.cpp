@@ -13,6 +13,7 @@
 #endif
 
 #include <vector>
+#include <string>
 #include "glm/glm.hpp"
 
 class CParticle{
@@ -262,19 +263,22 @@ public:
 class CApplication{
 private:
   float m_Time;
+  int   m_IterationNum;
 public:
   CApplication() :
-  m_Time(0.0f){}
+  m_Time(0.0f), m_IterationNum(5){}
 
   float GetTime(){ return m_Time; }
   void  SetTime(float time){ m_Time = time; }
+  int   GetIterationNum(){ return m_IterationNum; }
+  void  SetIterationNum(int in_num) { m_IterationNum = in_num; }
 };
 
 CApplication g_Application;
 CCloth       g_Cloth(2.0f, 2.0f, 20, 20);
 CBall        g_Ball(0.1f);
 
-void render_string(std::string str, int w, int h, int x0, int y0) {
+void render_string(std::string& str, int w, int h, int x0, int y0) {
   glDisable(GL_LIGHTING);
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
@@ -307,6 +311,7 @@ void display(void){
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_LIGHTING);
   glDepthFunc(GL_LESS); 
   glEnable(GL_COLOR_MATERIAL);
   glEnable(GL_NORMALIZE);
@@ -319,7 +324,11 @@ void display(void){
     g_Ball.Render();
   glPopMatrix();
 
-  //render_string();
+  glColor3d(1.0f, 1.0f, 1.0f);
+  char debug[128];
+  sprintf(debug, "ITERATIONS %d", g_Application.GetIterationNum());
+  std::string debug_text(debug);
+  render_string(debug_text, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 10, 20);
 
   glutSwapBuffers();
 }
