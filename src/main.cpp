@@ -86,14 +86,14 @@ public:
   void Update(float dt){
     m_Position.z = cos(m_Frequency) * 2.0f;
     m_Frequency += dt / 5.0f;
-    if (m_Frequency > 3.14f * 2.0f){ m_Frequency -= 3.14 * 2.0f; }
+    if (m_Frequency > 3.14f * 2.0f){ m_Frequency -= 3.14f * 2.0f; }
   }
 
   void Render(){
     glTranslatef(m_Position.x, m_Position.y, m_Position.z);
     static const glm::vec3 color(0.0f, 0.0f, 1.0f);
     glColor3fv((GLfloat*)&color);
-    glutSolidSphere(m_Radius,50,50);
+    glutSolidSphere(m_Radius, 30, 30);
   }
 
   glm::vec3& GetPosition(){ return m_Position; }
