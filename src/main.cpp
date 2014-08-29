@@ -358,6 +358,8 @@ void idle(void){
   GLfloat time = (float)glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
   GLfloat dt = time - g_Application.GetTime();
 
+  dt = (dt > 0.033f) ? 0.033f : dt;
+
   g_Ball.Update(dt);
   g_Cloth.Update(dt, &g_Ball);
 
