@@ -32,14 +32,13 @@ public:
   CParticle(){};
   ~CParticle(){}
 
-  void Update(float t){
+  void       Update(float t){
     if (m_IsMovable){
       glm::vec3 tmp = m_Position;
       m_Position += (m_Position - m_OldPosition) + m_Acceleration * t * t;
       m_OldPosition = tmp;
     }
   }
-
   glm::vec3& GetPosition()  { return m_Position; }
   void       AddPosition(const glm::vec3 pos){
     if (m_IsMovable){
@@ -106,7 +105,6 @@ public:
     m_Particle1->SetForce( force);
     m_Particle2->SetForce(-force);
   }
-
   void ResetForce(){
     glm::vec3 gravity( 0.0f, -0.98f, 0.0f );
     m_Particle1->SetForce(gravity);
@@ -131,7 +129,6 @@ public:
     m_Frequency += dt / 5.0f;
     if (m_Frequency > 3.14f * 2.0f){ m_Frequency -= 3.14 * 2.0f; }
   }
-
   void Render(){
     glTranslatef(m_Position.x, m_Position.y, m_Position.z);
     static const glm::vec3 color(0.0f, 0.0f, 1.0f);
@@ -227,7 +224,7 @@ public:
     }
     glEnd();
   }
-  void Update(float dt, CBall* ball){
+  void Update(float dt, CBall* ball, int iteraion){
     std::vector<CParticle>::iterator particle;
     for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
       (*particle).Update(dt);
@@ -243,7 +240,7 @@ public:
       }
     }
 */
-    for(int i = 0; i < 5; i++){
+    for(int i = 0; i < iteraion; i++){
       for(particle = m_Particles.begin(); particle != m_Particles.end(); particle++){
         glm::vec3 vec    = (*particle).GetPosition() - ball->GetPosition();
         float     length = glm::length(vec);
@@ -263,15 +260,14 @@ public:
 class CApplication{
 private:
   float m_Time;
-  int   m_IterationNum;
 public:
+  int   m_IterationNum;
+
   CApplication() :
   m_Time(0.0f), m_IterationNum(5){}
 
   float GetTime(){ return m_Time; }
   void  SetTime(float time){ m_Time = time; }
-  int   GetIterationNum(){ return m_IterationNum; }
-  void  SetIterationNum(int in_num) { m_IterationNum = in_num; }
 };
 
 CApplication g_Application;
@@ -326,7 +322,7 @@ void display(void){
 
   glColor3d(1.0f, 1.0f, 1.0f);
   char debug[128];
-  sprintf(debug, "ITERATIONS %d", g_Application.GetIterationNum());
+  sprintf(debug, "ITERATION %d", g_Application.m_IterationNum);
   std::string debug_text(debug);
   render_string(debug_text, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 10, 20);
 
@@ -367,13 +363,25 @@ void idle(void){
   GLfloat time = (float)glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
   GLfloat dt = time - g_Application.GetTime();
 
-  dt = (dt > 0.033f) ? 0.033f : dt;
+  dt = (dt > 0.033f) ? 0.033f : dt; // keep 30fps
 
   g_Ball.Update(dt);
-  g_Cloth.Update(dt, &g_Ball);
+  g_Cloth.Update(dt, &g_Ball, g_Application.m_IterationNum);
 
   g_Application.SetTime(time);
   glutPostRedisplay();
+}
+
+void special(int key, int x, int y){
+  if (key == GLUT_KEY_UP) {
+    g_Application.m_IterationNum++;
+  }
+
+  if (key == GLUT_KEY_DOWN) {
+    if (g_Application.m_IterationNum > 1){
+      g_Application.m_IterationNum--;
+    }
+  }
 }
 
 int main(int argc, char * argv[]){
@@ -387,6 +395,7 @@ int main(int argc, char * argv[]){
   glutDisplayFunc(display);
   glutIdleFunc(idle);
   glutReshapeFunc(reshape);
+  glutSpecialFunc(special);
 
   glutMainLoop();
   return 0;
